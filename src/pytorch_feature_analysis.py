@@ -1,4 +1,6 @@
-''' Function library for using PyTorch to run representational similarity analysis on convolutional neural networks.
+''' 
+
+Function library for using PyTorch to run representational similarity analysis on convolutional neural networks.
 
 This library contains a collection of functions for easily conducting representational similarity analysis (RSA) and related 
 analyses on convolutional neural networks (CNNs), serving as a wrapper for various PyTorch functions. There are also 
