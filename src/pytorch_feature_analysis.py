@@ -43,7 +43,6 @@ from importlib import reload
 import time
 import statsmodels.api as sm
 from scipy import math
-from scipy import stats
 import cornet
 import pathos
 
@@ -56,27 +55,21 @@ def parallel_process(func,arg_dict,num_cores,method='pathos',make_combinations=F
     Wrapper to streamline running a function many times in parallel. 
     
     Utility function to run a function many times in parallel, with many different combinations of arguments. 
-    Provide the function, along with a dictionary specifying the arguments to feed into the function. Can run either with 
-    the pathos or multiprocessing package. Also contains a flag, make_combinations, to do all combinations of input
-    arguments if desired.
+    Provide the function, along with a dictionary specifying the arguments to feed into the function. 
+    Can run either with the pathos or multiprocessing package. 
+    Also contains a flag, make_combinations, to do all combinations of input arguments if desired.
     
     Args:
         func: 
             The function you want to run many times.
         arg_dict: 
-            The structure depends on the make_combinations flag. If this flag is set to false, input a list of dictionaries, 
-            where each dictionary contains a set of arguments for one call of the function (i.e., you manually specify each set
-            of arguments for each function call); and each key is an argument name, with the corresponding value being an argument value.
-            If make_combinations is set to false, input a single dictionary of lists, where each key is an argument name, and each value is a list 
-            of values to put in for that argument. In the latter case, the function will run every possible permutation of argument values
-            from the different lists.
+            The structure depends on the make_combinations flag. If this flag is set to false, input a list of dictionaries, where each dictionary contains a set of arguments for one call of the function (i.e., you manually specify each set of arguments for each function call); and each key is an argument name, with the corresponding value being an argument value. If make_combinations is set to false, input a single dictionary of lists, where each key is an argument name, and each value is a list of values to put in for that argument. In the latter case, the function will run every possible permutation of argument values from the different lists.
         num_cores:
             The number of cores to run in parallel
         method:
             Which Python module to use for the multiprocessing; either pathos or multiprocessing. 
         make_combinations:
-            Whether arg_dict is a list of dictionaries containing each set of arguments to put in (in this case put False),
-            or a single dictionary of lists (in this case put True) 
+            Whether arg_dict is a list of dictionaries containing each set of arguments to put in (in this case put False), or a single dictionary of lists (in this case put True) 
     
     Returns:
         List containing the results of all calls to the function.
@@ -245,8 +238,7 @@ def pickle_dump(obj,fname):
 
 def nonwhite_pixel_mask(image,thresh=230):
     '''
-    Takes in a 3D numpy array representing an image (m x n x 3), and returns a 2D boolean mask indicating every non-white pixel. 
-    Useful for making a mask indicating the stimulus footprint on a white background.
+    Takes in a 3D numpy array representing an image (m x n x 3), and returns a 2D boolean mask indicating every non-white pixel. Useful for making a mask indicating the stimulus footprint on a white background.
     
     Args:
         image: 3D numpy array (width m, height n, 3 pixel channels)
@@ -284,8 +276,7 @@ def save_mask(mask,fname):
     
 def shrink_image(input_image,shrink_ratio,pad_color=(255,255,255),output_size=(224,224)):
     '''
-    Put in a PIL image, and it'll shrink the image, while keeping the same resolution as original image 
-    and padding the sides with the desired color. 
+    Put in a PIL image, and it'll shrink the image, while keeping the same resolution as original image and padding the sides with the desired color. 
     
     Args:
         input_image: PIL image you want to shrink. 
@@ -307,9 +298,7 @@ def shrink_image(input_image,shrink_ratio,pad_color=(255,255,255),output_size=(2
 
 def alphatize_image(im,alpha_target=(255,255,255),alpha_range=5):
     '''
-    Takes in a PIL image, and makes RGB values within a given range transparent. 
-    Any pixel all of whose RGB values are within alpha_range of alpha_target
-    will be made transparent. Used in MDS plotting function.
+    Takes in a PIL image, and makes RGB values within a given range transparent. Any pixel all of whose RGB values are within alpha_range of alpha_target will be made transparent. Used in MDS plotting function.
     
     Args:
         im: Image in PIL format
@@ -340,9 +329,7 @@ standard_transform = transforms.Compose(
 
 def preprocess_image(input_image,transform=standard_transform):
     '''
-    Preprocesses an image to prepare it for running through a network; resizes it, 
-    turns it into a tensor, standardizes the mean and SD of the pixels, 
-    and pads it to be 4D, as required by many networks (one "dummy" dimension).
+    Preprocesses an image to prepare it for running through a network; resizes it, turns it into a tensor, standardizes the mean and SD of the pixels, and pads it to be 4D, as required by many networks (one "dummy" dimension).
     
     args:
         input_image: PIL image 
@@ -362,8 +349,7 @@ def preprocess_image(input_image,transform=standard_transform):
 def get_layer_activation(module,input_,output_):
     '''
     
-    Utility function that is attached as a "forward hook" to each model layer to store the activations
-    as a numpy array in the dictionary layer_activations. 
+    Utility function that is attached as a "forward hook" to each model layer to store the activations as a numpy array in the dictionary layer_activations. 
     
     '''
     layer_activations[module.layer_name] = output_.cpu().detach().numpy() 
@@ -371,13 +357,11 @@ def get_layer_activation(module,input_,output_):
 def index_nested(the_item,indices):
     '''
     
-    Utility function to help with retrieving model layers that are buried in many levels of indexing that 
-    can be either numerical (array) or an attribute.
+    Utility function to help with retrieving model layers that are buried in many levels of indexing that can be either numerical (array) or an attribute.
     
     args:
         the_item: top-level item you want to pull something out of
-        indices: list of indices; each element is either a number (if that level of indexing is array-based),
-            or a string if that level is indexing based on attribute. 
+        indices: list of indices; each element is either a number (if that level of indexing is array-based), or a string if that level is indexing based on attribute. 
     
     return: 
         Whatever you've pulled out of the_item following the given indices. 
@@ -399,8 +383,7 @@ def index_nested(the_item,indices):
 def fetch_layers_internal(current_layer,layer_pointers,layer_indices,layer_counter):
     '''
 
-    Internal helper function that recursively crawls through all layers and sublayers of a network
-    and pulls out their addresses for easy reference. 
+    Internal helper function that recursively crawls through all layers and sublayers of a network and pulls out their addresses for easy reference. 
 
     '''
     layer_type = type(current_layer)
@@ -489,17 +472,12 @@ def fetch_layers_internal(current_layer,layer_pointers,layer_indices,layer_count
 def fetch_layers(model):
     '''
     
-    Takes in a CNN model, and returns "addresses" of all the layers to refer to them easily; this is useful
-    since different CNN models can be structured in different ways, with various chunks, layers, sublayers, etc.
+    Takes in a CNN model, and returns "addresses" of all the layers to refer to them easily; this is useful since different CNN models can be structured in different ways, with various chunks, layers, sublayers, etc.
     
     args:
-        model: a PyTorch CNN model. Currently, at least AlexNet, VGG19, ResNet-50, GoogLeNet, and CORNet-S
-        are supported; no guarantee yet that others will work. 
+        model: a PyTorch CNN model. Currently, at least AlexNet, VGG19, ResNet-50, GoogLeNet, and CORNet-S are supported; no guarantee yet that others will work. 
     returns: 
-        ordered dictionary where each key is a layer label of format ('relu2',3) (that is, the
-        second relu layer and third layer overall), and each value is the set of indices needed
-        to refer to that layer in the model. The index_nested function can then be use those 
-        indices to refer to a layer of a model when needed. 
+        ordered dictionary where each key is a layer label of format ('relu2',3) (that is, the second relu layer and third layer overall), and each value is the set of indices needed to refer to that layer in the model. The index_nested function can then be use those indices to refer to a layer of a model when needed. 
         
     Examples:
         >>> import torchvision.models as models
@@ -518,18 +496,11 @@ def fetch_layers(model):
 def prepare_models(models_dict):
     '''
     
-    Prepares the models you want to use: loads them with specified weight settings, and registers the
-    forward hooks that allow you to save intermediate activations. 
+    Prepares the models you want to use: loads them with specified weight settings, and registers the forward hooks that allow you to save intermediate activations. 
     
     args: 
         models_dict: 
-            Dictionary specifying the models to prepare, and the weight settings to use. 
-            Each key is your internal name you wish to use for your model. Each value is a tuple
-            (base_model,weight_setting), where base_model is the model to use (e.g., "alexnet"),
-            and weight_setting is "trained" for the trained version of the network,
-            "random" for an untrained version of the model with random weights, or a URL
-            linking to the state_dict for the weights to use if you wish to use some 
-            custom setting of the weights.
+            Dictionary specifying the models to prepare, and the weight settings to use. Each key is your internal name you wish to use for your model. Each value is a (base_model,weight_setting), where base_model is the model to use (e.g., "alexnet"), and weight_setting is "trained" for the trained version of the network, "random" for an untrained version of the model with random weights, or a URL linking to the state_dict for the weights to use if you wish to use some custom setting of the weights.
             
     returns:
         A dictionary where each key is your internal name of the model, and each value is the model itself. 
@@ -544,15 +515,11 @@ def prepare_models(models_dict):
 def prepare_model(which_model,weights_opt='trained'):
     '''
    
-    Prepares a single model to use: loads them with specified weight settings, and registers the
-    forward hooks that allow you to save intermediate activations. Better to use the prepare_models
-    function, since the output format is assumed by some of the other functions in this library. 
+    Prepares a single model to use: loads them with specified weight settings, and registers the forward hooks that allow you to save intermediate activations. Better to use the prepare_models function, since the output format is assumed by some of the other functions in this library. 
     
     args: 
         which_model: Base model to use (e.g., "alexnet")
-        weights_opt: Which weights to use. Set to "trained" for trained version of the network,
-            "random" for random weights, or a url linking to the state_dict for the weights
-            if you wish to use some custom setting of the weights. 
+        weights_opt: Which weights to use. Set to "trained" for trained version of the network, "random" for random weights, or a url linking to the state_dict for the weights if you wish to use some custom setting of the weights. 
             
     returns:
         The prepared model. 
@@ -609,17 +576,14 @@ def prepare_model(which_model,weights_opt='trained'):
 def get_model_activations_for_image(fname,model):
     '''
     
-    Takes in the file path of an image, and a prepared model (use the prepare_model or prepare_models function),
-    runs the image through the model, and returns a dictionary containing the model activations in each layer.
+    Takes in the file path of an image, and a prepared model (use the prepare_model or prepare_models function), runs the image through the model, and returns a dictionary containing the model activations in each layer.
     
     args:
         fname: file path of the image to run through a model
-        model: a CNN model object that has had the forward hooks attached to save the intermediate activations
-            (use the prepare_model or prepare_models function to do this)
+        model: a CNN model object that has had the forward hooks attached to save the intermediate activation (use the prepare_model or prepare_models function to do this)
     
     returns:
-        Dictionary where each key is a tuple denoting the layer (e.g., (conv3,5) is the third convolutional
-        layer and the fifth layer overall), and each value is a numpy array of the layer activations. 
+        Dictionary where each key is a tuple denoting the layer (e.g., (conv3,5) is the third convolutiona layer and the fifth layer overall), and each value is a numpy array of the layer activations. 
         
     '''
     
@@ -654,8 +618,7 @@ def correlate_upper_triang(m1,m2,func=lambda x,y:np.corrcoef(x,y)[0,1]):
     
     args:
         m1,m2: the two matrices in question
-        func: the function to use; defaults to Pearson correlation, put in your own function (e.g., Spearman)
-        if desired.
+        func: the function to use; defaults to Pearson correlation, put in your own function (e.g., Spearman) if desired.
     returns:
         Correlation coefficient between the upper triangular values of the two matrices. 
     '''
@@ -664,15 +627,12 @@ def correlate_upper_triang(m1,m2,func=lambda x,y:np.corrcoef(x,y)[0,1]):
 
 def get_array_ranks(array):
     '''
-    Put in array, spits out the same array with the entries replaced by their ranks after being sorted (in ascending order)
-    Ties are sorted arbitrarily. 
+    Put in array, spits out the same array with the entries replaced by their ranks after being sorted (in ascending order). Ties are sorted arbitrarily. 
     
     args: 
         array: Numpy array of any size.
     returns:
-        Array where each element corresponds to the rank of the element after sorting 
-        (e.g., the smallest element in the original array has value 0 in the returned array,
-        the seconds-smallest have value 1, and so on)
+        Array where each element corresponds to the rank of the element after sorting (e.g., the smallest element in the original array has value 0 in the returned array, the seconds-smallest have value 1, and so on)
     '''
     
     return array.ravel().argsort().argsort().reshape(array.shape)
@@ -680,9 +640,7 @@ def get_array_ranks(array):
 def get_extreme_dissims_total(input_rdm,num_items='all'):
     
     '''
-    Takes in a representational dissimilarity matrix and a desired number of items, and returns a subsetted
-    matrix with the items that maximize the total pairwise dissimilarity among all items (more colloquially,
-    the items in the original matrix that are as "different as possible" from each other)
+    Takes in a representational dissimilarity matrix and a desired number of items, and returns a subsetted matrix with the items that maximize the total pairwise dissimilarity among all items (more colloquially, the items in the original matrix that are as "different as possible" from each other)
     
     args: 
         input_rdm: representational dissimilarity matrix you wish to draw from
@@ -720,9 +678,7 @@ def get_extreme_dissims_total(input_rdm,num_items='all'):
 def get_dissims_that_match(input_rdm,target_val,num_items_final='all'):
     
     '''
-    Takes in a representational dissimilarity matrix and a desired number of items, and returns a subsetted
-    matrix with the items with a mean pairwise similarity that is as close as possible to a target value
-    (e.g., a set of items with a mean pairwise similarity that is as close as possible to .7)
+    Takes in a representational dissimilarity matrix and a desired number of items, and returns a subsetted matrix with the items with a mean pairwise similarity that is as close as possible to a target value (e.g., a set of items with a mean pairwise similarity that is as close as possible to .7)
     
     args: 
         input_rdm: representational dissimilarity matrix you wish to draw from
@@ -767,9 +723,7 @@ def get_dissims_that_match(input_rdm,target_val,num_items_final='all'):
 
 def get_most_uniform_dissims(input_rdm,num_items_final):
     '''
-    Takes in a representational dissimilarity matrix and a desired number of items, and returns a subsetted
-    matrix with the items that produces a maximally UNIFORM range of similarities (some very similar, 
-    some very dissimilar).
+    Takes in a representational dissimilarity matrix and a desired number of items, and returns a subsetted matrix with the items that produces a maximally UNIFORM range of similarities (some very similar, some very dissimilar).
     
     args: 
         input_rdm: representational dissimilarity matrix you wish to draw from
@@ -817,9 +771,7 @@ def get_most_uniform_dissims(input_rdm,num_items_final):
 def create_or_append_csv(df,path):
     '''
     
-    Utility function that creates a CSV from a pandas dataframe if no CSV with the given filepath exists;
-    else, if the CSV already exists, appends the contents of the pandas dataframe to the CSV
-    at that filepath. 
+    Utility function that creates a CSV from a pandas dataframe if no CSV with the given filepath exists; else, if the CSV already exists, appends the contents of the pandas dataframe to the CSV at that filepath. 
     
     args: 
         df: A pandas dataframe
@@ -837,10 +789,7 @@ def create_or_append_csv(df,path):
         
 def combine_csvs(path,keys=[]):
     '''
-    Utility function that takes in a list of filenames, and loads them all and combines them into a single pandas dataframe.
-    Alternatively, can take in a path for a directory, and it'll combine all the dataframes in that directory
-    into one. Can also specify "keys": requires substrings of the CSV filename for them to be included
-    in the new CSV (e.g., "cat" if you only want the CSVs with "cat" in the filename)
+    Utility function that takes in a list of filenames, and loads them all and combines them into a single pandas dataframe. Alternatively, can take in a path for a directory, and it'll combine all the dataframes in that directory into one. Can also specify "keys": requires substrings of the CSV filename for them to be included in the new CSV (e.g., "cat" if you only want the CSVs with "cat" in the filename)
     
     args: 
         path: Either a list of filepaths for the CSVs you want to combine, or the path of a directory with the desired CSVs.
@@ -905,18 +854,12 @@ def df_inds2cols(df):
 def df_agg(df,group_vars,data_vars,agg_funcs):
     '''
     
-    Utility function to easily aggregate values in a Pandas dataframe (e.g., if you want to take the mean
-    and standard deviation within a bunch of subgroups). There's a built-in Pandas function that does this,
-    but this one is more flexible and keeps the new column names as strings rather than tuples, and
-    also doesn't convert things to indices rather than columns. 
+    Utility function to easily aggregate values in a Pandas dataframe (e.g., if you want to take the mean and standard deviation within a bunch of subgroups). There's a built-in Pandas function that does this, but this one is more flexible and keeps the new column names as strings rather than tuples, and also doesn't convert things to indices rather than columns. 
     
     Args: 
         df: the dataframe whose data you want to aggregate
-        group_vars: list of variables you want to aggregate across (e.g., "city" and "gender" to create group
-            averages across combinations of city and gender, collapsing across other variables). Put 'rem'
-            if you want the group_vars to be all variables EXCEPT the specified data_vars.
-        data_vars: the actual values you want to aggregate (e.g., height if you want the average height).
-            Put 'rem' if you want the data_vars to be all variables EXCEPT the specified group_vars. 
+        group_vars: list of variables you want to aggregate across (e.g., "city" and "gender" to create group averages across combinations of city and gender, collapsing across other variables). Put 'rem' if you want the group_vars to be all variables EXCEPT the specified data_vars.
+        data_vars: the actual values you want to aggregate (e.g., height if you want the average height). Put 'rem' if you want the data_vars to be all variables EXCEPT the specified group_vars. 
         agg_funcs: list of functions you want to use for aggregating
         
     Returns:
@@ -1007,10 +950,7 @@ def df_filtsort(df,sortlist):
     
     Args: 
         df: The dataframe you wish to filter and sort
-        sortlist: A list of tuples, where each tuple is of format (column_name,sort_vals);
-            column_name is the name of the column to sort by, sort_vals is the desired
-            order of the values in that column. Columns will be sorted by priority
-            based on how they are listed.
+        sortlist: A list of tuples, where each tuple is of format (column_name,sort_vals); column_name is the name of the column to sort by, sort_vals is the desired order of the values in that column. Columns will be sorted by priority based on how they are listed.
     Returns:
         Dataframe that is subsetted and sorted in the desired way.
         
@@ -1051,8 +991,7 @@ def df_filtsort(df,sortlist):
 
 def df_pivot(df,index_cols,var_cols,value_cols,aggfunc='mean'):
     '''
-    Functionally identical to the default Pandas pivot function, but allows you to have multiple 
-    values columns, and automatically converts indices to columns. 
+    Functionally identical to the default Pandas pivot function, but allows you to have multiple values columns, and automatically converts indices to columns. 
     
     Args:
         df: the df to turn into a pivot table
@@ -1115,11 +1054,7 @@ def df_pivot(df,index_cols,var_cols,value_cols,aggfunc='mean'):
 def package_image_sets(image_list,entry_vars,grouping_vars):
     '''
     
-    This is a convenience function for preparing image sets for representational similarity analysis. 
-    The use case is that you want to make multiple RDMs, where certain variables vary WITHIN the entries
-    of each RDM (entry_vars), and some variables vary BETWEEN RDMs (grouping_vars). 
-    So, you give it a list of images, specifying the entry_vars and grouping_vars for each image,
-    and this function returns a stack of image sets that can then be fed into the get_rdms function.
+    This is a convenience function for preparing image sets for representational similarity analysis. The use case is that you want to make multiple RDMs, where certain variables vary WITHIN the entries of each RDM (entry_vars), and some variables vary BETWEEN RDMs (grouping_vars). So, you give it a list of images, specifying the entry_vars and grouping_vars for each image, and this function returns a stack of image sets that can then be fed into the get_rdms function.
     
     Args:
         image_list: a list of dictionaries, where each dictionary contains information about one image.
@@ -1216,8 +1151,7 @@ def get_image_set_rdm(image_set,
                       debug_check=False):
     '''
     
-    Internal helper function for the get_rdms function in order to enable parallel processing. 
-    See get_rdms function for full documentation. 
+    Internal helper function for the get_rdms function in order to enable parallel processing. See get_rdms function for full documentation. 
     
     '''
     
@@ -1432,15 +1366,7 @@ def get_rdms(image_sets,
     
     '''
     
-    This is the core function of this package: it takes in several (possibly many) image sets,
-    creates an RDM for each one, and stores this stack of RDMs as a Pandas dataframe, which
-    can then be easily fed into other functions to perform higher-order RSA (e.g., 
-    to compare RDMs across layers and models), or to visualize the results. The basic idea
-    is that your images can vary according to multiple variables; some of these will
-    vary within an RDM (entry_vars), and some will vary between RDMs (grouping_vars). 
-    The only work involved is preparing the inputs to this function; a minimal 
-    example is shown at the end of this documentation, and also in the 
-    accompanying readme.txt in the GitHub repo. 
+    This is the core function of this package: it takes in several (possibly many) image sets, creates an RDM for each one, and stores this stack of RDMs as a Pandas dataframe, which can then be easily fed into other functions to perform higher-order RSA (e.g., to compare RDMs across layers and models), or to visualize the results. The basic idea is that your images can vary according to multiple variables; some of these will vary within an RDM (entry_vars), and some will vary between RDMs (grouping_vars). The only work involved is preparing the inputs to this function; a minimal example is shown at the end of this documentation, and also in the accompanying readme.txt in the GitHub repo. 
     
     Args:
         image_sets: A list of image sets; an RDM will be computed separately for each one. 
@@ -1458,34 +1384,19 @@ def get_rdms(image_sets,
         rdm_name: the name to give to the RDM
         which_layers: a dictionary specifying which layers from each model to use
             (e.g., {'alexnet':['conv1','fc3']}); if a model is not specified, all layers are assumed 
-        dissim_metrics: a list of which dissimilarity metrics to use for the RDMs. Put 'corr' for 1-correlation; 
-            put 'euclidean_distance' for euclidean distance. If you wish to use a different one,
-            have that entry in the list be of format (dissim_func_name,dissim_func), such 
-            as ('spearman',stats.spearmanr)
-        kernel_sets: If you wish to only compute the RDMs over a subset of the kernels, 
-            specify it here. This will be a list of tuples. Each tuple is of format
-            (kernel_set_name,kernel_set_dict). Kernel_set_name is the name of the kernel_set.
-            kerkel_set_dict is a dictionary specifying which kernels to select from each
-            layer; each key is of format (model,layer_name), and each value is
-            the list of kernel indices to use (so, {('alexnet','conv1'):[1,5,7]}).
-            By default, all kernels are used and this can be ignored. 
+        dissim_metrics: a list of which dissimilarity metrics to use for the RDMs. Put 'corr' for 1-correlation; put 'euclidean_distance' for euclidean distance. If you wish to use a different one, have that entry in the list be of format (dissim_func_name,dissim_func), such as ('spearman',stats.spearmanr)
+        kernel_sets: If you wish to only compute the RDMs over a subset of the kernels, specify it here. This will be a list of tuples. Each tuple is of (kernel_set_name,kernel_set_dict). Kernel_set_name is the name of the kernel_set. kerkel_set_dict is a dictionary specifying which kernels to select from each layer; each key is of format (model,layer_name), and each value is the list of kernel indices to use (so, {('alexnet','conv1'):[1,5,7]}). By default, all kernels are used and this can be ignored. 
         num_perms:
-            If you wish to do a permutation test where you shuffle the labels of your RDM entries multiple times,
-            specify how many permutations to do here. 
+            If you wish to do a permutation test where you shuffle the labels of your RDM entries multiple times, specify how many permutations to do here. 
         num_cores:
-            If you wish to use parallel processing, specify how many cores here; put 'na'
-            if you don't want to process in parallel
+            If you wish to use parallel processing, specify how many cores here; put 'na' if you don't want to process in parallel
         verbose: 
-            If you want it to give you the progress of each RDM as it's computed, put True,
-            else put False. 
+            If you want it to give you the progress of each RDM as it's computed, put True, else put False. 
         debug_check:
             Put True if you want to stop and debug with ipdb after each RDM is computed,
             put False otherwise.
         append:
-            If you want to append the output dataframe to an existing dataframe, put True
-            and it'll append the results to the dataframe at that filename (and skip
-            any entries that are already in that dataframe). Else, that 
-            dataframe will be overwritten.
+            If you want to append the output dataframe to an existing dataframe, put True and it'll append the results to the dataframe at that filename (and skip any entries that are already in that dataframe). Else, that dataframe will be overwritten.
     
     Returns:
         Dataframe where each row is an RDM along with accompanying metadata. The columns of this 
@@ -1496,27 +1407,15 @@ def get_rdms(image_sets,
             layer: The layer name (e.g., conv1)
             layer_num: Where the layer falls in the network (e.g., conv1 is 1)
             layer_label: The layer name along with where it is in the network (e.g., (conv1,1) )
-            entry_keys: tuple of tuples where each tuple indicates the values of the entry variables
-                for the items in the RDM. For example, if the entries of the RDM are 
-                square, circle, and triangle, this would be (('square'),('circle'),('triangle')).
+            entry_keys: tuple of tuples where each tuple indicates the values of the entry variables for the items in the RDM. For example, if the entries of the RDM are square, circle, and triangle, this would be (('square'),('circle'),('triangle')).
             entry_labels: Same as entry keys, but it indicates the name of the entry variables.
                 For example, ({'shape':'square'},{'shape':'circle'},{'shape':'triangle'})
             dissim_metric: the dissim metric used in that RDM (e.g., euclidean_distance)
-            activation_type: Whether the RDM was computed by averaging across space 
-                for the convolutional layers ('feature_means'), versus simply
-                vectorizing the spatial dimension ('unit_level'). By default
-                the function does both.
+            activation_type: Whether the RDM was computed by averaging across space for the convolutional layers ('feature_means'), versus simply vectorizing the spatial dimension ('unit_level'). By default the function does both.
             kernel_set_name: The name of the kernel set being used. 
             kernel_set_inds: The indices of the kernels that are used. 
-            perm: 'orig_data' if it's not permuted, or the permutation number if you specified
-                permuted data. 
-            dissim_rankings: The ranking of the entries that would yield a sub-matrix
-                with the highest dissimilarity. For example, (3,5,6,2) means that 
-                a submatrix with entries 3 and 5 from the matrix would yield the highest
-                dissimilarity for two elements, a submatrix with 3,5,6 would yield
-                the highest dissimilarity for three elements, and so on. 
-            Additionally, there will be columns specifying the labels for each 
-                RDM, which will be whatever you specified in the input image sets. 
+            perm: 'orig_data' if it's not permuted, or the permutation number if you specified permuted data. 
+            dissim_rankings: The ranking of the entries that would yield a sub-matrix with the highest dissimilarity. For example, (3,5,6,2) means that a submatrix with entries 3 and 5 from the matrix would yield the highest dissimilarity for two elements, a submatrix with 3,5,6 would yieldthe highest dissimilarity for three elements, and so on. Additionally, there will be columns specifying the labels for each RDM, which will be whatever you specified in the input image sets. 
     
     
     Examples: 
@@ -1569,50 +1468,26 @@ def get_meta_rdms(rdm_df,
                   dissim_metrics=['corr']):
     '''
     
-    This is the other core function of this package: it takes in a Pandas dataframe with a stack of 
-    RDMs, and constructs a desired "meta-rdm" (i.e., an RDM that itself is formed by correlating 
-    other RDMs). Need to specify the "entry variables" (the variables that vary WITHIN each meta-rdm)
-    and the "grouping variables" (the variables that vary ACROSS meta-rdms). This allows you to easily
-    compute higher-order similarities among layers, models, groups of images, similarity metrics--
-    anything you want!
+    This is the other core function of this package: it takes in a Pandas dataframe with a stack of RDMs, and constructs a desired "meta-rdm" (i.e., an RDM that itself is formed by correlating other RDMs). Need to specify the "entry variables" (the variables that vary WITHIN each meta-rdm) and the "grouping variables" (the variables that vary ACROSS meta-rdms). This allows you to easily compute higher-order similarities among layers, models, groups of images, similarity metrics--anything you want!
     
     Args:
         rdm_df: The input dataframe containing a stack of rdms; the output of the get_rdms function.
         out_fname: Where to store the resulting dataframe with the meta-rdms (as .p file)
         entry_variables: The variables that vary across the entries within each output meta-rdm
-        entry_var_subsets: If you only want to make an RDM with a subset of the input RDM,
-            specify which subsets you want to use. This will be a list of tuples, where 
-            each tuple is of format (subset_name,entry_keys); subset_name is the name
-            of the subset, entry_vars is a list of the entry keys you wish to use.
-            For example, if you only want to include the RDMs for red and blue things,
-            this would be [('subset1',(('red'),('blue')))]. By default it just does all entries. 
+        entry_var_subsets: If you only want to make an RDM with a subset of the input RDM, specify which subsets you want to use. This will be a list of tuples, where each tuple is of format (subset_name,entry_keys); subset_name is the name of the subset, entry_vars is a list of the entry keys you wish to use. For example, if you only want to include the RDMs for red and blue things, this would be [('subset1',(('red'),('blue')))]. By default it just does all entries. 
         grouping_variables: The variables that vary ACROSS meta-rdms.
         df_name: The name you wish to give to the resulting dataframe (just cosmetic)
-        num_perms: if you wish to do a permutation test where you scramble the entries of each RDM,
-            put how many such scramblings you wish to do here.
-        dissim_metrics: a list of which dissimilarity metrics to use for the RDMs. Put 'corr' for 1-correlation; 
-            put 'euclidean_distance' for euclidean distance. If you wish to use a different one,
-            have that entry in the list be of format (dissim_func_name,dissim_func), such 
-            as ('spearman',stats.spearmanr)
-        entry_keys: tuple of tuples where each tuple indicates the values of the entry variables
-            for the items in the RDM. For example, if the entries of the RDM are 
-            square, circle, and triangle, this would be (('square'),('circle'),('triangle')).
-        entry_labels: Same as entry keys, but it indicates the name of the entry variables.
-            For example, ({'shape':'square'},{'shape':'circle'},{'shape':'triangle'})
-        Some other columns will be the specified grouping variables (which vary across RDMs).
-        Columns with the suffix "_sub" specify the values of the "sub-RDMs" that are the entries
-            to the meta-rdms; this allows you to see all "layers" of a higher-order RDM
-            at a glance. 
+        num_perms: if you wish to do a permutation test where you scramble the entries of each RDM, put how many such scramblings you wish to do here.
+        dissim_metrics: a list of which dissimilarity metrics to use for the RDMs. Put 'corr' for 1-correlation; put 'euclidean_distance' for euclidean distance. If you wish to use a different one, have that entry in the list be of format (dissim_func_name,dissim_func), such as ('spearman',stats.spearmanr)
+        entry_keys: tuple of tuples where each tuple indicates the values of the entry variables for the items in the RDM. For example, if the entries of the RDM are square, circle, and triangle, this would be (('square'),('circle'),('triangle')).
+        entry_labels: Same as entry keys, but it indicates the name of the entry variables. For example, ({'shape':'square'},{'shape':'circle'},{'shape':'triangle'}). Some other columns will be the specified grouping variables (which vary across RDMs). Columns with the suffix "_sub" specify the values of the "sub-RDMs" that are the entries to the meta-rdms; this allows you to see all "layers" of a higher-order RDM at a glance. 
         
     
     Returns:
         Dataframe containing the stack of meta-rdms with the following columns:
             matrix: the RDM
             df_name: Name of the dataframe
-            activation_type: Whether the RDM was computed by averaging across space 
-                for the convolutional layers ('feature_means'), versus simply
-                vectorizing the spatial dimension ('unit_level'). By default
-                the function does both.
+            activation_type: Whether the RDM was computed by averaging across space for the convolutional layers ('feature_means'), versus simply vectorizing the spatial dimension ('unit_level'). By default the function does both.
             entry_var_subset: The name of the subset of entries, if you specified one.
     
     Examples:
@@ -1738,9 +1613,7 @@ def get_meta_rdms(rdm_df,
 def subset_rdm_df(df,entry_keys):
     '''
     
-    If you have a Pandas dataframe with a stack of RDMs (the output of get_rdms or get_meta_rdms), 
-    this function allows you to extract a subset of those RDMs (i.e., if you want to only
-    look at some, but not all, cells of those RDMs).
+    If you have a Pandas dataframe with a stack of RDMs (the output of get_rdms or get_meta_rdms), this function allows you to extract a subset of those RDMs (i.e., if you want to only look at some, but not all, cells of those RDMs).
     
     Args:
         df: The dataframe with a stack of RDMs (the output of get_rdms or get_meta_rdms)
@@ -1810,70 +1683,32 @@ def my_mds(rdm_df,
            save_opts='na'):
     '''
     
-    This is another core function of the library: it'll create an MDS plot for an RDM. 
-    You must give it a single row from a dataframe containing an RDM (the output of
-    the get_rdms or get_meta_rdms function). This gives the function 
-    lots of helpful meta-data to make it easier to specify plotting options, 
-    because then you can specify based on the name of your RDM entries 
-    (which should be meaningful) how to plot each entry on the MDS plot. 
-    Generally, then, things will be specified as dictionaries, where each
-    key is the entry, and each value is the plotting option for that entry 
-    (for example, the size/color of the dot, the path to the picture to use, etc.)
+    This is another core function of the library: it'll create an MDS plot for an RDM. You must give it a single row from a dataframe containing an RDM (the output of the get_rdms or get_meta_rdms function). This gives the function lots of helpful meta-data to make it easier to specify plotting options, because then you can specify based on the name of your RDM entries (which should be meaningful) how to plot each entry on the MDS plot. Generally, then, things will be specified as dictionaries, where each key is the entry, and each value is the plotting option for that entry (for example, the size/color of the dot, the path to the picture to use, etc.)
     
     Args:
-        rdm_df: One row from a dataframe from get_rdms or get_meta_rdms,
-            containing an RDM and the accompanying meta-data.
-        dims: How many dimensions to use in the MDS plot. Either 2 or 3; 
-            if 3, you can't plot pictures yet. 
-        plot_opts: Dictionary of plot options for the matplotlib call,
-            that you with to be uniform for ALL entries; so, if you want to set 
-            all dots to a given size, set {'s':5}). 
-        other_dot_opts: this is if you want to set options for each SPECIFIC
-            dot (e.g., change the color or size of certain dots). The way it works is
-            you give it a dictionary, where each key is the option to change
-            in Matplotlib (e.g., "s" for size), and each value is a dictionary
-            specifying the value of that option for each entry; in this latter
-            dictionary, each key is the entry key for an entry of the RDM,
-            and each value is the desired value of the option for that entry.
-            For instance, {'s':{('cat'):2,('dog'):3}} sets the size 
-            of the dot for the cat entry to 2, and the size of the dot for the dog entry to 3.
-        plot_limits: The desired limits of the plot, as (min,max) tuple.
-            Remember that output of MDS function ranges from 0 to 1, so this 
-            determines how big you want margins to be.
-        cond_labels: if you want a text label annotating some or all of the dots,
-            put a dictionary here, where each key is the entry key for the entry you want to annotate,
-            and the value is the text you want to annotate with.
+        rdm_df: One row from a dataframe from get_rdms or get_meta_rdms, containing an RDM and the accompanying meta-data.
+        dims: How many dimensions to use in the MDS plot. Either 2 or 3; if 3, you can't plot pictures yet. 
+        plot_opts: Dictionary of plot options for the matplotlib call, that you with to be uniform for ALL entries; so, if you want to set all dots to a given size, set {'s':5}). 
+        other_dot_opts: this is if you want to set options for each SPECIFIC dot (e.g., change the color or size of certain dots). The way it works is you give it a dictionary, where each key is the option to change in Matplotlib (e.g., "s" for size), and each value is a dictionary specifying the value of that option for each entry; in this latter dictionary, each key is the entry key for an entry of the RDM, and each value is the desired value of the option for that entry. For instance, {'s':{('cat'):2,('dog'):3}} sets the size of the dot for the cat entry to 2, and the size of the dot for the dog entry to 3.
+        plot_limits: The desired limits of the plot, as (min,max) tuple. Remember that output of MDS function ranges from 0 to 1, so this determines how big you want margins to be.
+        cond_labels: if you want a text label annotating some or all of the dots, put a dictionary here, where each key is the entry key for the entry you want to annotate, and the value is the text you want to annotate with.
         label_offset: how far away from the dot to put the label
         label_opts: dictionary with any optional keyword arguments for making the labels, e.g. the font size or style
         plot_dots: True if you want to plot the dots, False if not (e.g., if you're plotting pictures instead)
-        cond_colors: dictionary specifying what color to make the dots, where each key 
-            is the entry key for a given item, and each value is the color you want. 
-        cond_pics: If you want to plot pictures on the MDS plot, a dictionary where each key
-            is the entry key for the item to add a picture to, and each value is either
-            a PIL image or a path to an image.
+        cond_colors: dictionary specifying what color to make the dots, where each key is the entry key for a given item, and each value is the color you want. 
+        cond_pics: If you want to plot pictures on the MDS plot, a dictionary where each key is the entry key for the item to add a picture to, and each value is either a PIL image or a path to an image.
         pic_size: How big to make each picture.
         alphatize_pics: Whether to set the white parts of any pictures transparent.
         alpha_target: which RGB value to set transparent if alphatize_pics is True.
-        alpha_range: What range of RGB values around alpha_target to set transparent
-            (e.g., if parts of the image are off-white)
-        pic_offset: (x,y) tuple indicating where to put the picture relative to 
-            the MDS point (e.g., if you want it a little bit above a dot)
-        line_trajectories: if you want to have lines connecting the points 
-            (for example, if each point is a layer), this is specified here.
-            You have a list, where each element specifies a given trajectory.
-            Each element of this list is a tuple (trajectory_order,opt_dict)
-            where trajectory order is a list of the entry keys of the items
-            you want to connect with a line, in the order you want,
-            and opt_dict is any keyword options for drawing the line
-            (specifying thickness, color, etc.)
+        alpha_range: What range of RGB values around alpha_target to set transparent (e.g., if parts of the image are off-white)
+        pic_offset: (x,y) tuple indicating where to put the picture relative to the MDS point (e.g., if you want it a little bit above a dot)
+        line_trajectories: if you want to have lines connecting the points (for example, if each point is a layer), this is specified here. You have a list, where each element specifies a given trajectory. Each element of this list is a tuple (trajectory_order,opt_dict) where trajectory order is a list of the entry keys of the items you want to connect with a line, in the order you want, and opt_dict is any keyword options for drawing the line(specifying thickness, color, etc.)
         show_stress: whether to indicate the stress of the MDS solution on the plot
         plot_style: which matplotlib plot style to use (default classic)
         fig_title: The title of the figure on teh plot
         fig_size: The size of the plot.
         show: whether to show the plot (as opposed to just saving it)
-        save_opts: the options to put into the matplotlib call to savefig; 
-            if you want to save, this should at least include the filename and file type
-            (e.g., {'fname':'my_mds.pdf','format':'PDF'})
+        save_opts: the options to put into the matplotlib call to savefig; if you want to save, this should at least include the filename and file type (e.g., {'fname':'my_mds.pdf','format':'PDF'})
         
     Returns:
         Shows and/or saves the resulting MDS plot.
@@ -1983,17 +1818,11 @@ def my_mds(rdm_df,
 def compute_tolerances(input_df):
     '''
     
-    Can generally ignore; this is explained in an upcoming paper. 
-    This function takes in a dataframe with a stack of RDMs, which must have two kinds of 
-    entry variables (i.e., two variables must vary across the entries of the RDM). 
-    Then, it computes how "dominant" a given variable is in the joint 
-    coding of the two variables. 
+    Can generally ignore; this is explained in an upcoming paper. This function takes in a dataframe with a stack of RDMs, which must have two kinds of entry variables (i.e., two variables must vary across the entries of the RDM). Then, it computes how "dominant" a given variable is in the joint coding of the two variables. 
     
     TI = ( d.d-var1/s-var2 - d.s-var1/d-var2) / (d.d-var1/s-var2 + d.s-var1/d-var2)
     
-    A value of 1 means that var1 completely dominates, a value of -1 means that var2
-    completely dominantes, and a value of 0 means they are equally dominant.
-    This value is added to each row (RDM) of the dataframe.
+    A value of 1 means that var1 completely dominates, a value of -1 means that var2 completely dominantes, and a value of 0 means they are equally dominant. This value is added to each row (RDM) of the dataframe.
     
     Args:
         input_df: The dataframe with the RDMs to compute the dominance values for. 
@@ -2062,24 +1891,15 @@ def run_2way_svm_analysis(image_list,var1,var2,grouping_vars,models_dict,
                      which_layers,analysis_name,save_path):
     '''
     
-    This will run an SVM decoding analysis on a set of images. 
-    You give it a stack of images, along with some variables describing each image, and 
-    it runs the decoding analysis using leave-one-out cross-validation.
-    It assumes a two-way crossed design, where you want to performing decoding
-    of one variable collapsing across values of the other, and vice versa. 
+    This will run an SVM decoding analysis on a set of images. You give it a stack of images, along with some variables describing each image, and it runs the decoding analysis using leave-one-out cross-validation. It assumes a two-way crossed design, where you want to performing decoding of one variable collapsing across values of the other, and vice versa. 
     
     Args:
-        image_list: list of dictionaries, one for each image. Each dict must contain 
-            a key "path" whose value is the path to that image. The other keys
-            are variables associated with that image. 
+        image_list: list of dictionaries, one for each image. Each dict must contain a key "path" whose value is the path to that image. The other keys are variables associated with that image. 
         var1: The first variable to decode across
         var2: The second variable to decode across 
-        grouping_vars: The variables to group the analysis by; that is, you separately do the SVM 
-            analysis WITHIN each possible set of values of the grouping variables.
-        models_dict: Dictionary with the models to use, where each key is the name of a model,
-            and each value is the model itself.
-        which_layers: The layers to use from each model; a dictionary where each key is a model
-            name, and each value is a list of the layers to use (e.g,. {'alexnet':['conv1','fc2']})
+        grouping_vars: The variables to group the analysis by; that is, you separately do the SVM analysis WITHIN each possible set of values of the grouping variables.
+        models_dict: Dictionary with the models to use, where each key is the name of a model, and each value is the model itself.
+        which_layers: The layers to use from each model; a dictionary where each key is a model name, and each value is a list of the layers to use (e.g,. {'alexnet':['conv1','fc2']})
         save_path:
             Where to save the output dataframe with the results.
             
@@ -2199,25 +2019,12 @@ def run_2way_svm_analysis(image_list,var1,var2,grouping_vars,models_dict,
 def compute_etas_for_model_and_imageset_fast(image_set,model_desc,which_layer_dict):
     '''
     
-    This will run a two-way ANOVA analysis for a model and set of images,
-    giving the eta-squared (variance explained effect size) for two factors
-    and their interaction. The nice thing is that the method doesn't require
-    saving the model activations for every single stimulus, which becomes
-    very intractable very quickly. 
+    This will run a two-way ANOVA analysis for a model and set of images, giving the eta-squared (variance explained effect size) for two factors and their interaction. The nice thing is that the method doesn't require saving the model activations for every single stimulus, which becomes very intractable very quickly. 
     
     Args:
-        image_set: tuple consisting of (image_set_labels,stim_dict,entry_types).
-            image_set_labels is a dictionary describing the image set that'll be used in the output
-            dataframe, stim_dict is a dictionary of the stimuli where each key is the value of the two IVs,
-            and entry_types gives the variable names of the two IVs. 
-        model_desc: tuple of format (model_name,base_model,weight_opts), 
-            where model_name is your internal name for the model, base_model is the model architecture
-            (e.g., AlexNet), and weight_opts is either 'trained','random', or a 
-            link to the state_dict for a set of weights.
-        which_layer_dict: dictionary specifying which layers to analyze for each model,
-            where each key is a model, and each value is a list of layers in format ('conv3',5)
-            (tuple specifying e.g. 3rd Conv layer and 5th layer overall). This is REQUIRED
-            for this function to save space. 
+        image_set: tuple consisting of (image_set_labels,stim_dict,entry_types). image_set_labels is a dictionary describing the image set that'll be used in the output dataframe, stim_dict is a dictionary of the stimuli where each key is the value of the two IVs, and entry_types gives the variable names of the two IVs. 
+        model_desc: tuple of format (model_name,base_model,weight_opts), where model_name is your internal name for the model, base_model is the model architecture (e.g., AlexNet), and weight_opts is either 'trained','random', or a link to the state_dict for a set of weights.
+        which_layer_dict: dictionary specifying which layers to analyze for each model, where each key is a model, and each value is a list of layers in format ('conv3',5) (tuple specifying e.g. 3rd Conv layer and 5th layer overall). This is REQUIRED for this function to save space. 
             
     Returns:
         Dataframe indicating the average and standard deviation of the eta-squared values
