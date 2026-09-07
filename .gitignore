@@ -6,3 +6,32 @@ dist
 __pycache__
 *.egg-info
 _build
+
+# --- secrets (managed block, keep in every repo) ---
+.env
+.env.*
+!.env.example
+!.env.template
+!.env.sample
+*.key
+*.pem
+*.p12
+*.pfx
+*.jks
+*.keystore
+id_rsa
+id_ed25519
+*.ppk
+secrets/
+.secrets/
+credentials.json
+*credentials*.json
+service-account*.json
+*serviceaccount*.json
+.netrc
+.npmrc
+.pypirc
+*.token
+*_token.txt
+config.env
+# --- end secrets block ---
